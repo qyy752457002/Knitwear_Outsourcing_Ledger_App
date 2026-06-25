@@ -1,0 +1,7 @@
+cd frontend
+
+npm install
+
+npm start
+
+然后 选择 Android

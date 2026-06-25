@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "外协收发记账",
+    "slug": "tq-accounting",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F5F5"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tq.accounting"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#3B6FF5"
+      },
+      "package": "com.tq.accounting"
+    },
+    "extra": {
+      "apiBaseUrl": "http://10.0.2.2:8000/api/v1"
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font"
+    ]
+  }
+}

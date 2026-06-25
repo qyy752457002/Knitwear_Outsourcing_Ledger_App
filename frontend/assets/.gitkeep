@@ -1,0 +1,7 @@
+# 请将 Expo 默认资源放入此目录：
+# - icon.png (1024x1024)
+# - splash.png
+# - adaptive-icon.png
+#
+# 或运行: npx create-expo-app@latest temp --template blank
+# 然后从 temp/assets 复制到此处
