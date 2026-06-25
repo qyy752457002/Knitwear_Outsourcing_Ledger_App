@@ -43,7 +43,9 @@ async def list_members(factory_id: str, user: User = Depends(get_current_user)):
             }
         )
 
-    current_role = next((m.role for m in memberships if m.user_id == user.id), "member")
+    current_role = next(
+        (m.role for m in memberships if m.user_id == str(user.id)), "member"
+    )
     members.sort(key=lambda x: (0 if x["role"] == "owner" else 1, x["joined_at"]), reverse=False)
 
     return success(
@@ -63,7 +65,7 @@ async def remove_member(
     user: User = Depends(get_current_user),
 ):
     await check_owner(factory_id, user)
-    if member_user_id == user.id:
+    if member_user_id == str(user.id):
         raise validation_error("不可移除自己")
 
     membership = await FactoryMember.find_one(
@@ -89,7 +91,7 @@ async def create_invitation(factory_id: str, user: User = Depends(get_current_us
     invitation = Invitation(
         factory_id=factory_id,
         factory_name=factory.name,
-        inviter_id=user.id,
+        inviter_id=str(user.id),
         code=code,
         expire_at=utcnow() + timedelta(days=7),
     )
@@ -122,19 +124,19 @@ async def accept_invitation(body: AcceptInvitationRequest, user: User = Depends(
 
     existing = await FactoryMember.find_one(
         FactoryMember.factory_id == invitation.factory_id,
-        FactoryMember.user_id == user.id,
+        FactoryMember.user_id == str(user.id),
     )
     if existing:
         raise conflict("您已是该工厂成员")
 
     member = FactoryMember(
         factory_id=invitation.factory_id,
-        user_id=user.id,
+        user_id=str(user.id),
         role="member",
     )
     await member.insert()
 
-    invitation.used_by = user.id
+    invitation.used_by = str(user.id)
     invitation.used_at = utcnow()
     await invitation.save()
 

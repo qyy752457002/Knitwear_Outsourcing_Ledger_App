@@ -23,7 +23,11 @@ function TabIcon({ label, focused }: { label: string; focused: boolean }) {
   );
 }
 
-export function TabNavigator() {
+interface Props {
+  onLogout: () => void;
+}
+
+export function TabNavigator({ onLogout }: Props) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -42,7 +46,9 @@ export function TabNavigator() {
     >
       <Tab.Screen name="Home" options={{ title: '首页' }} component={FactoryListScreen} />
       <Tab.Screen name="Stats" options={{ title: '统计' }} component={StatsScreen} />
-      <Tab.Screen name="Mine" options={{ title: '我的' }} component={MineScreen} />
+      <Tab.Screen name="Mine" options={{ title: '我的' }}>
+        {() => <MineScreen onLogout={onLogout} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

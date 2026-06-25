@@ -16,15 +16,25 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 2. 配置环境变量
+### 2. 启动 MongoDB
+
+**Docker（推荐）：**
+
+```bash
+docker compose up -d
+```
+
+**或** 本地安装 MongoDB Community Server，确保服务运行在 `27017` 端口。
+
+### 3. 配置环境变量
 
 ```bash
 copy .env.example .env
 ```
 
-确保 MongoDB 已启动（默认 `mongodb://localhost:27017`）。
+确保 `.env` 中 `MONGODB_URL=mongodb://localhost:27017`（`.env.example` 已默认配置）。
 
-### 3. 启动服务
+### 4. 启动服务
 
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -34,7 +44,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 - 健康检查：http://localhost:8000/health
 - API 前缀：`/api/v1`
 
-### 4. 开发登录
+### 5. 开发登录
 
 手机号登录使用固定验证码（见 `.env` 中 `DEV_SMS_CODE`，默认 `123456`）：
 

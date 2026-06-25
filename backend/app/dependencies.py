@@ -1,5 +1,7 @@
+from datetime import date, datetime
 from typing import Any, Generic, TypeVar
 
+from beanie import PydanticObjectId
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -15,6 +17,18 @@ class ApiResponse(Generic[T]):
         self.code = code
         self.message = message
         self.data = data
+
+
+def _serialize_data(value: Any) -> Any:
+    if isinstance(value, PydanticObjectId):
+        return str(value)
+    if isinstance(value, dict):
+        return {key: _serialize_data(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_serialize_data(item) for item in value]
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    return value
 
 
 async def get_current_user(
@@ -47,4 +61,4 @@ async def get_current_user(
 
 
 def success(data: Any, message: str = "ok") -> dict[str, Any]:
-    return {"code": 0, "message": message, "data": data}
+    return {"code": 0, "message": message, "data": _serialize_data(data)}

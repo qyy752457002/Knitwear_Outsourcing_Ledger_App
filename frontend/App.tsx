@@ -22,6 +22,11 @@ export default function App() {
     setIsAuthenticated(true);
   }, []);
 
+  const handleLogout = useCallback(async () => {
+    await api.clearTokens();
+    setIsAuthenticated(false);
+  }, []);
+
   if (!ready) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -42,7 +47,7 @@ export default function App() {
   return (
     <>
       <StatusBar style="dark" />
-      <RootNavigator isAuthenticated={isAuthenticated} />
+      <RootNavigator isAuthenticated={isAuthenticated} onLogout={handleLogout} />
     </>
   );
 }

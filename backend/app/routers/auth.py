@@ -24,12 +24,13 @@ router = APIRouter(prefix="/auth", tags=["认证"])
 
 def _token_payload(user: User) -> dict:
     settings = get_settings()
+    user_id = str(user.id)
     return {
-        "access_token": create_access_token(user.id),
-        "refresh_token": create_refresh_token(user.id),
+        "access_token": create_access_token(user_id),
+        "refresh_token": create_refresh_token(user_id),
         "expires_in": settings.access_token_expire_minutes * 60,
         "user": {
-            "id": user.id,
+            "id": user_id,
             "nickname": user.nickname,
             "phone": user.phone,
         },

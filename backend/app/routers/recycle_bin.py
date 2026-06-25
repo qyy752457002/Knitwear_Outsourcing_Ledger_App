@@ -18,7 +18,7 @@ router = APIRouter(prefix="/recycle-bin", tags=["回收站"])
 @router.get("/factories")
 async def list_deleted_factories(user: User = Depends(get_current_user)):
     factories = await Factory.find(
-        Factory.owner_id == user.id, Factory.deleted == True
+        Factory.owner_id == str(user.id), Factory.deleted == True
     ).sort("-deleted_at").to_list()
 
     return success(
@@ -76,7 +76,7 @@ async def restore_factory(factory_id: str, user: User = Depends(get_current_user
     factory = await Factory.get(factory_id)
     if factory is None or not factory.deleted:
         raise not_found("工厂不存在")
-    if factory.owner_id != user.id:
+    if str(factory.owner_id) != str(user.id):
         raise not_found("工厂不存在")
 
     factory.deleted = False
@@ -124,7 +124,7 @@ async def permanent_delete_factory(factory_id: str, user: User = Depends(get_cur
     factory = await Factory.get(factory_id)
     if factory is None or not factory.deleted:
         raise not_found("工厂不存在")
-    if factory.owner_id != user.id:
+    if str(factory.owner_id) != str(user.id):
         raise not_found("工厂不存在")
 
     await _purge_factory(factory_id)

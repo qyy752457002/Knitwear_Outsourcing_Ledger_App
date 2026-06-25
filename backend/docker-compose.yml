@@ -1,0 +1,12 @@
+services:
+  mongodb:
+    image: docker.1ms.run/library/mongo:7
+    container_name: tq-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - tq_mongodb_data:/data/db
+
+volumes:
+  tq_mongodb_data:

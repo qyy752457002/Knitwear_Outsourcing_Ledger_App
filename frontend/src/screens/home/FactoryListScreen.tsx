@@ -125,13 +125,7 @@ export function FactoryListScreen() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         contentContainerStyle={factories.length === 0 ? styles.flex : undefined}
         ListEmptyComponent={
-          !loading ? (
-            <EmptyState
-              text="还没有上游工厂"
-              actionText="＋ 添加上游工厂"
-              onAction={() => navigation.navigate('FactoryEdit', {})}
-            />
-          ) : null
+          !loading ? <EmptyState text="还没有上游工厂" /> : null
         }
         renderItem={({ item }) => (
           <TouchableOpacity

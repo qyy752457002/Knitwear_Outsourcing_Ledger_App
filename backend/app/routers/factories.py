@@ -54,22 +54,25 @@ async def list_factories(
             }
         )
 
-    factories = await Factory.find(
-        In(Factory.id, factory_ids), Factory.deleted == False
-    ).sort("-created_at").to_list()
+    factories: list[Factory] = []
+    for factory_id in factory_ids:
+        factory = await Factory.get(factory_id)
+        if factory is not None and not factory.deleted:
+            factories.append(factory)
+    factories.sort(key=lambda f: f.created_at, reverse=True)
 
     if keyword:
         kw = keyword.lower()
         factories = [f for f in factories if kw in f.name.lower()]
 
     deleted_count = await Factory.find(
-        Factory.owner_id == user.id, Factory.deleted == True
+        Factory.owner_id == str(user.id), Factory.deleted == True
     ).count()
 
     items = []
     for factory in factories:
         style_count = await Style.find(
-            Style.factory_id == factory.id, Style.deleted == False
+            Style.factory_id == str(factory.id), Style.deleted == False
         ).count()
         role = await get_user_role(factory.id, user.id) or "member"
         items.append(
@@ -93,10 +96,12 @@ async def list_factories(
 
 @router.post("")
 async def create_factory(body: FactoryCreate, user: User = Depends(get_current_user)):
-    factory = Factory(name=body.name.strip(), owner_id=user.id)
+    factory = Factory(name=body.name.strip(), owner_id=str(user.id))
     await factory.insert()
 
-    member = FactoryMember(factory_id=factory.id, user_id=user.id, role="owner")
+    member = FactoryMember(
+        factory_id=str(factory.id), user_id=str(user.id), role="owner"
+    )
     await member.insert()
 
     return success({"id": factory.id, "name": factory.name}, "创建成功")

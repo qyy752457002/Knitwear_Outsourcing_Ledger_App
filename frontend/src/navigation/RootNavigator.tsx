@@ -17,9 +17,10 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 interface Props {
   isAuthenticated: boolean;
+  onLogout: () => void;
 }
 
-export function RootNavigator({ isAuthenticated }: Props) {
+export function RootNavigator({ isAuthenticated, onLogout }: Props) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -31,11 +32,9 @@ export function RootNavigator({ isAuthenticated }: Props) {
           />
         ) : (
           <>
-            <Stack.Screen
-              name="Main"
-              component={TabNavigator}
-              options={{ headerShown: false }}
-            />
+            <Stack.Screen name="Main" options={{ headerShown: false }}>
+              {() => <TabNavigator onLogout={onLogout} />}
+            </Stack.Screen>
             <Stack.Screen
               name="FactoryEdit"
               component={FactoryEditScreen}

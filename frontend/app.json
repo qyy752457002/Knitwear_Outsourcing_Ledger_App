@@ -17,7 +17,8 @@
       "adaptiveIcon": {
         "backgroundColor": "#3B6FF5"
       },
-      "package": "com.tq.accounting"
+      "package": "com.tq.accounting",
+      "usesCleartextTraffic": true
     },
     "extra": {
       "apiBaseUrl": "http://10.0.2.2:8000/api/v1"

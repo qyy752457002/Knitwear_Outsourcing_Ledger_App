@@ -1,10 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 import type { ApiResponse } from '../types';
 
-const API_BASE =
-  Constants.expoConfig?.extra?.apiBaseUrl ?? 'http://localhost:8000/api/v1';
+function resolveApiBase(): string {
+  const configured = Constants.expoConfig?.extra?.apiBaseUrl;
+  if (typeof configured === 'string' && configured.length > 0) {
+    return configured;
+  }
+  if (Platform.OS === 'android') {
+    return 'http://10.0.2.2:8000/api/v1';
+  }
+  return 'http://localhost:8000/api/v1';
+}
+
+const API_BASE = resolveApiBase();
 
 const TOKEN_KEY = 'access_token';
 const REFRESH_KEY = 'refresh_token';
@@ -49,7 +60,17 @@ class ApiClient {
       headers,
     });
 
-    const json = (await response.json()) as ApiResponse<T>;
+    const raw = await response.text();
+    let json: ApiResponse<T>;
+    try {
+      json = JSON.parse(raw) as ApiResponse<T>;
+    } catch {
+      throw new Error(
+        response.ok
+          ? '服务器响应格式异常'
+          : `网络异常（${response.status}）`,
+      );
+    }
 
     if (!response.ok) {
       const message =
